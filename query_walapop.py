@@ -1,26 +1,35 @@
 import urllib.parse
 import requests
+def get_walapop (search_text: str);
+    user_agent = {'User-agent': 'Mozilla/5.0'}
+    keywords = search_text
+    keywords = urllib.parse.quote(keywords)
+    url = f"https://api.wallapop.com/api/v3/cars/search?category_ids=100&keywords={keywords}&filters_source=suggester&longitude=-3.69196&latitude=40.41956"
 
-user_agent = {'User-agent': 'Mozilla/5.0'}
+    r = requests.get(url, headers=user_agent)
 
-keywords = 'renault clio'
-keywords = urllib.parse.quote(keywords)
-url = f"https://api.wallapop.com/api/v3/cars/search?category_ids=100&keywords={keywords}&filters_source=suggester&longitude=-3.69196&latitude=40.41956"
+    print(r.json())
+    search_results = r.json()['search_objects']
+    price_sum = 0
+    num_elements = len(search_results)
 
-r= requests.get(url, headers=user_agent)
+    results =[]
+    for r in search_results:
+        articulo ={
+            "price": r["content"]["price"]),
+            "title": r["content"]["title"]),
+            "storytelling": r["content"]["storytelling"])
+        }
 
-print(r.json())
-search_results = r.json()['search_objects']
-price_sum = 0
-elements = len(search_results)
-for r in search_results:
-    print(r["content"]["price"])
-    print(r["content"]["title"])
-    print(r["content"]["storytelling"])
-    print("------------------------------------------")
+        results.append(articulo)
+        print("------------------------------------------")
 
-    price_sum = price_sum + r["content"]["price"]
+        price_sum = price_sum + r["content"]["price"]
 
-print(price_sum/elements)
+    price_avg = price_sum / num_elements
 
-
+    return {
+        "num_results": num_elements,
+        "price_avg": price_avg,
+        "results": results,
+    }
